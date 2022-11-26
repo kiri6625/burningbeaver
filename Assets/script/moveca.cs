@@ -23,6 +23,6 @@ public class moveca : MonoBehaviour
         {
             y = player.transform.position.y + 3;
         }
-        gameObject.transform.position = new Vector3(player.transform.position.x + 6, y, -9);
+        gameObject.transform.position = new Vector3(player.transform.position.x + 5, y, -9);
     }
 }

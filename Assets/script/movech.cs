@@ -9,16 +9,21 @@ public class movech : MonoBehaviour
 {
     public Animator an;
     public GameObject pl;
+    public GameObject wl;
     bool hleaf = false;
     public int health;
+    float max_speed;
+    public int p = 20;
+    bool p_zone = false;
 
     Rigidbody2D rigid;
-    animch ani;
+    Animator ani;
     void Start()
     {
+        max_speed = 40;
         an = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
-        ani = pl.GetComponent<animch>();
+        ani = pl.GetComponent<Animator>();
         health = 3;
     }
 
@@ -29,13 +34,16 @@ public class movech : MonoBehaviour
             Debug.Log("leaf");
             StartCoroutine(leaf());
         }
-        if(other.tag == "snake")
+        if(other.tag == "p_zone")
         {
-            Debug.Log("snake");
-            if (ani.punch)
-            {
-                Destroy(other.gameObject);
-            }
+            p_zone = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "p_zone")
+        {
+            p_zone = false;
         }
     }
     IEnumerator leaf()
@@ -51,62 +59,77 @@ public class movech : MonoBehaviour
 
     void Update()
     {
-        if (health <= 0)
+        //Debug.Log(rigid.velocity);
+        if(!p_zone)
         {
-           
+            if (Input.GetKeyDown(KeyCode.R) && !hleaf)
+            {
+
+                Move();
+            }
+            if (Input.GetKey(KeyCode.Space) && !hleaf)
+            {
+                rigidJump();
+            }
+            if (Input.GetKeyDown(KeyCode.S) && !hleaf)
+            {
+                //an.SetTrigger("slide");
+                Slide();
+            } else if (Input.GetKeyUp(KeyCode.S))
+            {
+                an.SetTrigger("idle");
+                ani.SetTrigger("idle");
+            }
         }
-        if (!ani.jump && !ani.slide && !ani.punch)
+        if(Input.GetKeyDown(KeyCode.P) && !hleaf && p_zone)
         {
-            ani.ani.speed = 0;
+            if(p <= 0)
+            {
+                Punch();
+                wl.transform.Translate(300*Random.Range(100,250),0,0);
+                p = 20;
+            } else
+            {
+                p -= 1;
+            }
         }
-        if (Input.GetKey(KeyCode.R)&&!hleaf)
-        {
-            Move();
-        }
-        if(Input.GetKeyDown(KeyCode.Space) && !hleaf)
-        {
-            rigidJump();
-        }
-        if (Input.GetKey(KeyCode.S) && !hleaf)
-        {
-            //an.SetTrigger("slide");
-            Slide();
-        }
-        if(Input.GetKeyDown(KeyCode.P) && !hleaf)
-        {
-            Punch();
-        }
+
 
     }
 
     void Move()
     {
-        gameObject.transform.Translate(20*Time.deltaTime, 0, 0);
-        if (!ani.jump && !ani.slide && !ani.punch)
+        
+        if(rigid.velocity.x >= max_speed)
         {
-            ani.Walk();
+            rigid.velocity = new Vector2(max_speed, rigid.velocity.y);
+        } else
+        {
+            rigid.AddForce(Vector2.right * 700);
         }
+        ani.SetTrigger("walk");
     }
     void rigidJump()
     {
-        if (!ani.jump && !ani.slide && !ani.punch)
+        ani.SetTrigger("jump");
+        float r;
+        if (rigid.velocity.x > 0)
         {
-            StartCoroutine(ani.Jump());
+            r = rigid.velocity.x - 0.1f;
+        } else
+        {
+            r = 0;
         }
-        rigid.AddForce(Vector2.up * 1500);
+        rigid.velocity = new Vector2(r, 0);
+        rigid.AddForce(Vector2.up * 300);
     }
     void Slide()
     {
-        if (!ani.jump && !ani.slide && !ani.punch)
-        {
-            StartCoroutine(ani.Slide());
-        }
+        an.SetTrigger("slide");
+        ani.SetTrigger("slide");
     }
     void Punch()
     {
-        if(!ani.jump && !ani.slide && !ani.punch)
-        {
-            StartCoroutine(ani.Punch());
-        }
+        ani.SetTrigger("punch");
     }
 }

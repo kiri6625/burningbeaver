@@ -14,9 +14,9 @@ public class background : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameObject.transform.position.x - maincamera.transform.position.x <= -19)
+        if(gameObject.transform.position.x - maincamera.transform.position.x <= -27)
         {
-            gameObject.transform.Translate(40,0,0);
+            gameObject.transform.Translate(48,0,0);
         }
     }
 }
