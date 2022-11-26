@@ -4,6 +4,7 @@ using System.ComponentModel;
 using TreeEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class movech : MonoBehaviour
 {
@@ -38,6 +39,17 @@ public class movech : MonoBehaviour
         {
             p_zone = true;
         }
+        if (other.tag == "snake")
+        {
+            StartCoroutine(End());
+        }
+    }
+    IEnumerator End()
+    {
+        Time.timeScale = 0.1f;
+        yield return new WaitForSeconds(1);
+        SceneManager.LoadScene("EndScence");
+
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
