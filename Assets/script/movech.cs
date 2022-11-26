@@ -59,12 +59,20 @@ public class movech : MonoBehaviour
 
     void Update()
     {
+        if (gameObject.transform.position.y <= 7.5)
+        {
+            rigid.gravityScale = 7;
+        }
+        else
+        {
+            rigid.gravityScale = 60;
+        }
+        //rigid.gravityScale = (gameObject.transform.position.y*2)/3 + 3 * gameObject.transform.position.y + 16;
         //Debug.Log(rigid.velocity);
         if(!p_zone)
         {
             if (Input.GetKeyDown(KeyCode.R) && !hleaf)
             {
-
                 Move();
             }
             if (Input.GetKey(KeyCode.Space) && !hleaf)
